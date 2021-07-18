@@ -1,6 +1,27 @@
 const galleryItems = [
   {
     preview:
+      'https://img5.goodfon.ru/original/320x240/e/95/vodopad-gory-waterfall-mountains.jpg?d=1',
+    original:
+      'https://img5.goodfon.ru/original/1280x720/e/95/vodopad-gory-waterfall-mountains.jpg?d=1',
+    description: 'Waterfall',
+  },
+  {
+    preview:
+      'https://img5.goodfon.ru/original/320x240/f/cc/gory-gimalai-sneg-veter.jpg?d=1',
+    original:
+      'https://img5.goodfon.ru/original/1280x720/f/cc/gory-gimalai-sneg-veter.jpg?d=1',
+    description: 'Mountains',
+  },
+  {
+    preview:
+      'https://img5.goodfon.ru/original/320x240/d/d9/lavanda-groza-zvezdy-lavender-thunderstorm-stars.jpg?d=1',
+    original:
+      'https://img5.goodfon.ru/original/1280x720/d/d9/lavanda-groza-zvezdy-lavender-thunderstorm-stars.jpg?d=1',
+    description: 'Thunderstorm',
+  },
+  {
+    preview:
       'https://cdn.pixabay.com/photo/2019/05/14/16/43/himilayan-blue-poppy-4202825__340.jpg',
     original:
       'https://cdn.pixabay.com/photo/2019/05/14/16/43/himilayan-blue-poppy-4202825_1280.jpg',
@@ -62,13 +83,43 @@ const galleryItems = [
       'https://cdn.pixabay.com/photo/2019/05/17/04/35/lighthouse-4208843_1280.jpg',
     description: 'Lighthouse Coast Sea',
   },
+    {
+    preview:
+      'https://img5.goodfon.ru/original/320x240/e/de/leto-seascape-summer-pliazh-volny-sand-more-pesok-sea-blue-1.jpg?d=1',
+    original:
+      'https://img5.goodfon.ru/original/1280x720/e/de/leto-seascape-summer-pliazh-volny-sand-more-pesok-sea-blue-1.jpg?d=1',
+    description: 'Sand and waves',
+  },
+  {
+    preview:
+      'https://img5.goodfon.ru/original/320x240/f/f4/osen-les-listia-derevia-park-colorful-forest-landscape-pa-26.jpg?d=1',
+    original:
+      'https://img5.goodfon.ru/original/1280x720/f/f4/osen-les-listia-derevia-park-colorful-forest-landscape-pa-26.jpg?d=1',
+    description: 'Autumn forest',
+  },
+  {
+    preview:
+      'https://img5.goodfon.ru/original/320x240/0/dc/priroda-luna-noch-vetki-derevo-nebo-polnolunie.jpg?d=1',
+    original:
+      'https://img5.goodfon.ru/original/1280x720/0/dc/priroda-luna-noch-vetki-derevo-nebo-polnolunie.jpg?d=1',
+    description: 'Moon',
+  },
 ];
 
 const galleryContainer = document.querySelector('.js-gallery');
-const galleryCards = createGalleryCards(galleryItems);
-galleryContainer.insertAdjacentHTML('beforeend', galleryCards);
-galleryContainer.addEventListener('click', onGalleryCardClick);
 const modalWindow = document.querySelector('.js-lightbox');
+const modalOfGallery = document.querySelector('.js-lightbox');
+const imageOfModal = document.querySelector('.lightbox__image');
+const modalOfOverlay = document.querySelector('.lightbox__overlay');
+const buttonClose = document.querySelector('button[data-action="close-lightbox"]');
+const galleryCards = createGalleryCards(galleryItems);
+
+galleryContainer.insertAdjacentHTML('beforeend', galleryCards);
+
+galleryContainer.addEventListener('click', onGalleryCardClick);
+buttonClose.addEventListener('click', onButtonCloseClick);
+modalOfOverlay.addEventListener('click', onButtonCloseClick);
+
 
 
 function createGalleryCards(items) {
@@ -95,9 +146,30 @@ function createGalleryCards(items) {
 function onGalleryCardClick(e) {
   if (e.target.tagName !== 'IMG') return false;
   e.preventDefault();
+  modalOfGallery.classList.add('is-open');
+  imageOfModal.setAttribute('src', e.target.dataset.source);
+  window.addEventListener('keydown', keystorkeAction);
+};
+
+console.log(buttonClose.tagName);
+
+function onButtonCloseClick(e) {
+  modalOfGallery.classList.remove('is-open');
+  imageOfModal.setAttribute('src', '');
+};
  
+function keystorkeAction(e) {
+  let currentImgOfCard = galleryItems.find(img => img.original === imageOfModal.getAttribute('src'));
+  let previousImgOfCard = galleryItems[galleryItems.indexOf(currentImgOfCard) - 1];
+  let nextImgOfCard = galleryItems[galleryItems.indexOf(currentImgOfCard) + 1];
+  if (e.code === 'Escape')
+    onButtonCloseClick();
+
+  if (e.code === 'ArrowLeft' && !!previousImgOfCard) 
+    imageOfModal.setAttribute('src', previousImgOfCard.original);
 
 
-  console.log(e.target.dataset.source);
+  if (e.code === 'ArrowRight' && !!nextImgOfCard)
+    imageOfModal.setAttribute('src', nextImgOfCard.original);
+
 }
-
